@@ -3,12 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>Обобщённый метод моментов (ОММ) - Полный стенд</title>
-    <!-- Подключаем MathJax для красивых формул LaTeX -->
     <script>
         MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] } };
     </script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
-    <!-- Подключаем Chart.js для первой вкладки -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
     
     <style>
@@ -17,7 +15,6 @@
         .header { background: var(--primary); color: white; padding: 15px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
         h1, h2, h3, h4 { margin: 0 0 10px 0; }
         
-        /* Вкладки */
         .tabs { display: flex; justify-content: center; background: #34495e; padding: 0; flex-wrap: wrap; }
         .tab-btn { background: none; border: none; color: #bdc3c7; padding: 15px 20px; font-size: 15px; cursor: pointer; transition: 0.3s; font-weight: bold; border-bottom: 4px solid transparent; }
         .tab-btn:hover { color: white; }
@@ -26,7 +23,6 @@
         .tab-content.active { display: block; animation: fadeIn 0.4s; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Лейаут панелей */
         .panel-row { display: flex; gap: 20px; justify-content: center; align-items: stretch; flex-wrap: wrap; }
         .panel { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.06); flex: 1; min-width: 400px; }
         .canvas-wrapper { position: relative; background: #fafafa; border: 1px solid #eee; border-radius: 6px; overflow: hidden; display: flex; justify-content: center; }
@@ -40,7 +36,6 @@
         
         .explanation { font-size: 15px; color: #444; background: #e8f4f8; padding: 15px; border-left: 4px solid var(--accent); border-radius: 4px; margin-bottom: 20px; }
         
-        /* Стили для столбцов (Вкладки 2 и 4) */
         .bars-container { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
         .bar-group { display: flex; align-items: flex-end; height: 26px; border-bottom: 1px solid #eee; position: relative; }
         .bar-wrap { flex-grow: 1; position: relative; height: 100%; margin-left: 10px; }
@@ -178,36 +173,50 @@
     </div>
 </div>
 
-<!-- ================= ВКЛАДКА 3: АНИЗОТРОПНОЕ ЯДРО ================= -->
-<div id="tab3" class="tab-content">
-    <div class="panel-row">
-        <div class="panel" style="flex: 1.5;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                <h3>Данные с шумом (Subspace)</h3>
-                <div>
-                    <label style="cursor: pointer; font-weight: bold; color: var(--danger); margin-right: 15px;">
-                        <input type="radio" name="kType" value="iso" checked onchange="updateKMode2()"> Изотропное
-                    </label>
-                    <label style="cursor: pointer; font-weight: bold; color: var(--success);">
-                        <input type="radio" name="kType" value="aniso" onchange="updateKMode2()"> Анизотропное ($\rho \ll 1$)
-                    </label>
+<!-- ================= ВКЛАДКА 3: АНИЗОТРОПНОЕ ЯДРО (НОВАЯ ВЕРСИЯ С 3D) ================= -->
+        <div class="slide">
+             <h3 class="slide-title">5. Инновация 1: Анизотропное ядро (Поиск подпространства)</h3>
+             <div class="slide-content">
+                <div class="explanation" style="border-color: var(--accent); background: #eaf2f8;">
+                    <b>Проблема:</b> Данные в $\mathbb{R}^d$ часто лежат на низкоразмерном многообразии $P^*$ (сигнал), а в ортогональном подпространстве $Q^*$ находится шум. Изотропное ядро, "смотрящее" на данные со случайного ракурса, видит лишь зашумленное облако.
+                    <br><b>Решение:</b> Анизотропное ядро находит "правильный угол зрения" (проектор $P^* \approx \text{PCA}(X)$), поворачивает пространство и видит истинную структуру.
                 </div>
-            </div>
-            <div class="canvas-wrapper" id="wrap2" style="height: 450px; cursor: crosshair;">
-                <canvas id="bgCanvas2"></canvas>
-                <canvas id="fgCanvas2"></canvas>
-            </div>
+                
+                <div class="columns" style="gap: 20px; align-items: stretch;">
+                    <!-- 3D View -->
+                    <div class="col" style="flex: 0.8;">
+                         <h4 style="text-align: center; margin-top:0; font-size: 20px;">Многомерное пространство (симуляция)</h4>
+                         <div class="canvas-wrapper" style="height: 400px; border-color: #bdc3c7;">
+                             <canvas id="canvas3D"></canvas>
+                         </div>
+                    </div>
+                    <!-- Projections -->
+                    <div class="col">
+                        <h4 style="text-align: center; margin-top:0; font-size: 20px;">Что "видят" ядра (проекции на 2D)</h4>
+                        <div style="display: flex; flex-direction: column; gap: 15px; height: 100%;">
+                            <div class="canvas-wrapper" style="flex: 1; border-color: var(--danger);">
+                                 <div style="position:absolute; top:5px; left:10px; font-weight:bold; color:var(--danger)">Неправильная проекция $P_{rand}$ (Изотропная)</div>
+                                 <canvas id="projRandom"></canvas>
+                            </div>
+                            <div class="canvas-wrapper" style="flex: 1; border-color: var(--success);">
+                                <div style="position:absolute; top:5px; left:10px; font-weight:bold; color:var(--success)">Правильная проекция $P^*$ (Анизотропная)</div>
+                                <canvas id="projAligned"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Controls -->
+                    <div class="col" style="flex: 0.7;">
+                        <h4 style="text-align: center; margin-top:0; font-size: 20px;">Управление</h4>
+                        <div style="background: var(--formula-bg); padding: 20px; border-radius: 5px; height: calc(100% - 70px); display: flex; flex-direction: column; justify-content: center;">
+                             <p style="font-size: 18px; line-height: 1.4; margin-top:0;">Перемещайте ползунок, чтобы симулировать поиск правильного подпространства (как это делает PCA).</p>
+                             <label for="alignSlider" style="font-weight: bold; margin-top: 20px; font-size: 18px;">Степень выравнивания:</label>
+                             <input type="range" id="alignSlider" min="0" max="100" value="0" style="width: 100%; margin: 10px 0;">
+                             <p style="font-size: 18px; line-height: 1.4;">Обратите внимание, как из бесформенного облака (вверху) на нижнем экране проявляются четкие кластеры.</p>
+                        </div>
+                    </div>
+                </div>
+             </div>
         </div>
-        <div class="panel" style="flex: 1;">
-            <h3 style="text-align: center;">Анализ отклика ядра</h3>
-            <h4>Реакция сенсора $Z_j = \sum \psi_j(x_i)$:</h4>
-            <div class="gauge-wrap">
-                <div class="gauge-fill" id="gaugeFill2"></div>
-                <div class="gauge-text" id="gaugeText2">0.00</div>
-            </div>
-        </div>
-    </div>
-</div>
 
 <!-- ================= ВКЛАДКА 4: ИЗБЫТОЧНАЯ ПАРАМЕТРИЗАЦИЯ ================= -->
 <div id="tab4" class="tab-content">
@@ -270,7 +279,7 @@
 
         if(tabId === 'tab1') { if(window.obsChart) window.obsChart.update(); }
         if(tabId === 'tab2') resetTab1();
-        if(tabId === 'tab3') initTab2();
+        if(tabId === 'tab3') initTabAniso();
         if(tabId === 'tab4') resetK3();
         if(tabId === 'tab5') draw1D4();
     }
@@ -596,6 +605,127 @@
         if(mode1D4 === 'fine') { ctx.fillText("Градиент = 0. Модель, попавшая сюда,", 300, 200); ctx.fillText("никогда не найдет кластеры ➔", 300, 220); } 
         else if(mode1D4 === 'coarse') { ctx.fillText("Слияние пиков", 720, 170); }
     }
+
+    // ==========================================
+    // ЛОГИКА ВКЛАДКИ 3: АНИЗОТРОПНОЕ ЯДРО (3D-версия)
+    // ==========================================
+    let points3D = [];
+    const trueAngleX = -0.5, trueAngleY = 0.5; // Угол наклона истинной плоскости
+    let currentAngleY = 0;
+
+    function initTabAniso() {
+        const c3d = document.getElementById('canvas3D');
+        const cRand = document.getElementById('projRandom');
+        const cAlign = document.getElementById('projAligned');
+        const parent3d = c3d.parentElement;
+        c3d.width = parent3d.clientWidth; c3d.height = parent3d.clientHeight;
+        const parent2d = cRand.parentElement;
+        cRand.width = parent2d.clientWidth; cRand.height = parent2d.clientHeight;
+        cAlign.width = parent2d.clientWidth; cAlign.height = parent2d.clientHeight;
+
+        points3D = [];
+        const clusters = [ {x: -100, y: -80}, {x: 100, y: -80}, {x: 0, y: 100} ];
+        clusters.forEach(center => {
+            for (let i = 0; i < 150; i++) {
+                const r = Math.random() * 40;
+                const a = Math.random() * 2 * Math.PI;
+                // Точки генерируются в 2D (на плоскости XY)
+                let p2d = { x: center.x + r * Math.cos(a), y: center.y + r * Math.sin(a), z: 0 };
+                // А затем поворачиваются, чтобы создать "скрытое многообразие"
+                let p3d = rotate3D(p2d, trueAngleX, trueAngleY);
+                points3D.push(p3d);
+            }
+        });
+
+        document.getElementById('alignSlider').addEventListener('input', (e) => {
+            const alignment = e.target.value / 100; // от 0 до 1
+            currentAngleY = alignment * trueAngleY;
+            requestAnimationFrame(drawAniso);
+        });
+        
+        drawAniso();
+    }
+    
+    function rotate3D(p, angleX, angleY) {
+        // Поворот вокруг оси Y
+        let p1 = {
+            x: p.x * Math.cos(angleY) + p.z * Math.sin(angleY),
+            y: p.y,
+            z: -p.x * Math.sin(angleY) + p.z * Math.cos(angleY)
+        };
+        // Поворот вокруг оси X
+        let p2 = {
+            x: p1.x,
+            y: p1.y * Math.cos(angleX) - p1.z * Math.sin(angleX),
+            z: p1.y * Math.sin(angleX) + p1.z * Math.cos(angleX)
+        };
+        return p2;
+    }
+
+    function drawAniso() {
+        const ctx3D = document.getElementById('canvas3D').getContext('2d');
+        const ctxRand = document.getElementById('projRandom').getContext('2d');
+        const ctxAlign = document.getElementById('projAligned').getContext('2d');
+        
+        const w3d = ctx3D.canvas.width, h3d = ctx3D.canvas.height;
+        const wr = ctxRand.canvas.width, hr = ctxRand.canvas.height;
+        
+        ctx3D.clearRect(0, 0, w3d, h3d);
+        ctxRand.clearRect(0, 0, wr, hr);
+        ctxAlign.clearRect(0, 0, wr, hr);
+        
+        ctx3D.save();
+        ctxRand.save();
+        ctxAlign.save();
+        
+        // Центрируем все канвасы
+        ctx3D.translate(w3d / 2, h3d / 2);
+        ctxRand.translate(wr / 2, hr / 2);
+        ctxAlign.translate(wr / 2, hr / 2);
+        
+        // Масштабирование для проекций
+        const scale2D = Math.min(wr, hr) / 400;
+        ctxRand.scale(scale2D, scale2D);
+        ctxAlign.scale(scale2D, scale2D);
+        
+        // --- Рендер ---
+        const rotatedPoints = points3D.map(p => rotate3D(p, 0, -currentAngleY));
+
+        // 1. Неправильная проекция (смотрим "в лоб" на исходные точки)
+        ctxRand.fillStyle = 'rgba(231, 76, 60, 0.5)';
+        points3D.forEach(p => {
+            ctxRand.beginPath();
+            ctxRand.arc(p.x, p.y, 2.5, 0, 7);
+            ctxRand.fill();
+        });
+
+        // 2. Правильная проекция (смотрим на выровненные точки)
+        ctxAlign.fillStyle = 'rgba(39, 174, 96, 0.6)';
+        rotatedPoints.forEach(p => {
+            let alignedP = rotate3D(p, trueAngleX, 0); // Выравниваем по X
+            ctxAlign.beginPath();
+            ctxAlign.arc(alignedP.x, alignedP.y, 2.5, 0, 7);
+            ctxAlign.fill();
+        });
+        
+        // 3. 3D вид
+        rotatedPoints.sort((a, b) => a.z - b.z); // Сортировка для псевдо-3D
+        rotatedPoints.forEach(p => {
+            const scale = (p.z + 200) / 400; // Перспектива
+            ctx3D.fillStyle = `rgba(44, 62, 80, ${0.3 + scale * 0.5})`;
+            ctx3D.beginPath();
+            ctx3D.arc(p.x * scale, p.y * scale, 1.5 * scale, 0, 7);
+            ctx3D.fill();
+        });
+
+        ctx3D.restore();
+        ctxRand.restore();
+        ctxAlign.restore();
+    }
+
+    // В `switchTab` добавь вызов initTabAniso для новой вкладки
+    // Например, если это tab3:
+    // if(tabId === 'tab3') initTabAniso();
 
     // Инициализация при загрузке страницы
     window.onload = () => { initTabObs(); resetTab1(); };
