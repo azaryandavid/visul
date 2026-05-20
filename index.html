@@ -178,17 +178,12 @@
     </div>
 </div>
 
-<!-- ================= ВКЛАДКА 3: АНИЗОТРОПНОЕ ЯДРО (НОВАЯ ВЕРСИЯ С 3D) ================= -->
 <!-- ================= ВКЛАДКА 3: АНИЗОТРОПНОЕ ЯДРО (3D) ================= -->
 <div id="tab3" class="tab-content">
-    <div class="explanation" style="border-color: var(--purple); background: #f4ecf7;">
-        <b>Модель 10D пространства:</b> Сигнал (кластеры) лежит в маломерном многообразии (плоскость X, Y). Остальные оси (сгруппированы в Z) содержат гигантский шум. <br>
-        Вращая <b>ползунок</b>, мы меняем матрицу-проектор $P$. Оптимизатор ищет угол, отсекающий шум. <b>Покрутите 3D-сцену мышкой!</b>
-    </div>
     <div class="panel-row">
         <!-- 3D Сцена -->
         <div class="panel" style="flex: 1.2;">
-            <h3 style="margin-top: 0; text-align: center;">3D Пространство (Реальность)</h3>
+            <h3 style="margin-top: 0; text-align: center;">Пространство</h3>
             <div id="container3D" style="width: 100%; height: 450px; background: #1a1a1a; border-radius: 6px; box-shadow: inset 0 0 20px rgba(0,0,0,0.5);"></div>
             <p style="text-align: center; font-size: 13px; color: #888; margin-bottom: 0;">Левая кнопка мыши: Вращение камеры | Колесико: Зум</p>
         </div>
@@ -206,7 +201,7 @@
 
             <div style="flex-grow: 1; display: flex; flex-direction: column;">
                 <h3 style="margin-top: 0; text-align: center;">2D Проекция $P(X)$</h3>
-                <p style="font-size: 13px; color: #666; text-align: center; margin-top: 0;">То, что "видят" наши тест-функции на этой плоскости.</p>
+                <p style="font-size: 13px; color: #666; text-align: center; margin-top: 0;">Проекция для тестовых функций</p>
                 <div style="flex-grow: 1; position: relative; border: 2px dashed #bdc3c7; border-radius: 6px; background: #fff;">
                     <canvas id="canvas2d_proj" style="width:100%; height:100%;"></canvas>
                 </div>
